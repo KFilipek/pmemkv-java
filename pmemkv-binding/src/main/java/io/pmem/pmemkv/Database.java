@@ -408,10 +408,17 @@ public class Database<K, V> {
 		}
 
 		@Override
-		public void finalize() {
-			if (config != 0) {
-				config_delete(config);
-				config = 0;
+		protected void finalize() throws Throwable {
+			// TODO(kfilipek): finalize is deprecated in Java 9
+			try {
+				if (config != 0) {
+					config_delete(config);
+					config = 0;
+				}
+			} catch (Exception e) {
+				/* Catch everything from JNI method */
+			} finally {
+				super.finalize();
 			}
 		}
 
